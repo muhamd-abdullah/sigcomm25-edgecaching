@@ -1,0 +1,2 @@
+pycurl==7.45.6
+Unidecode==1.4.0
