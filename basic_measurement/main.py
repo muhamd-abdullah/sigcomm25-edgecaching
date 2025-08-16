@@ -11,7 +11,9 @@ also captured.
 
 import argparse
 import concurrent.futures
+import sys
 import csv
+csv.field_size_limit(sys.maxsize)
 import json
 import logging
 import os
