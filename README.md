@@ -68,13 +68,21 @@ The following table maps repository components to figures and analyses in the pa
 cd crawler
 python example.py --max-videos 10 --out-dir ../urls/vimeo
 
-# 2. Measure latency and hitrate
+# 2. Measure latency and obtain HTTP responses
 cd ../basic_measurement
 python main.py ../urls/vimeo ./results --workers 20 --verbose
 
-# 3. Compute QoE with Sabre
+# 3. Process responses and obtain cache hit-rates
+python helper.py ./results ./results/basic.parquet
+
+# 4. Compute QoE with Sabre
 cd ../video_qoe
-python run_sabre.py     --input-parquet ./data/example.parquet     --output-parquet ./results/output.parquet     --bandwidth 25 --miss-latency 370 --buffer-size 30
+python run_sabre.py \
+  --input-parquet ../basic_measurement/results/basic.parquet \
+  --output-parquet ./results/qoe.parquet \
+  --bandwidth 25 \
+  --miss-latency 370 \
+  --buffer-size 30
 ```
 
 ---
@@ -86,7 +94,7 @@ If you use these artifacts, please cite our paper:
 ```
 @inproceedings{abdullah2025edgecaching,
   title={Edge Caching as Differentiation},
-  author={Muhammad Abdullah and Mughees Ur Rehman and Pavlos Nikolopoulos and Katerina Argyraki},
+  author={Muhammad Abdullah, Mughees Ur Rehman, Pavlos Nikolopoulos, Katerina Argyraki},
   booktitle={ACM SIGCOMM 2025},
   year={2025}
 }
