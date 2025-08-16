@@ -12,6 +12,7 @@ Measure CDN edge latency and hitrate for video segments or web objects using lig
 - [Output Files & Schema](#output-files--schema)
 - [Command‑Line Options](#command-line-options)
 - [Examples](#examples)
+- [Post-Processing](#post-processing)
 - [Performance Tuning](#performance-tuning)
 - [Notes & Caveats](#notes--caveats)
 
@@ -143,19 +144,38 @@ usage: main.py [urls_dir] [results_dir] [--user-agent UA] [--workers N]
 
 ---
 
+# Post-Processing
+
+```bash
+python helper.py <csv_results_dir> <path_to_output.parquet>
+```
+
+Generates **per‑video** data parquet with assigned **cache hit‑rates (%)** and displays quick summary stats.
+
+**What it does:**
+- Loads all measurement CSVs from `<csv_results_dir>`.
+- Classifies cache hits into **L1** and **L2** based on **response headers** that vary by CDN.
+- Aggregates results to **per‑video** granularity with hit‑rate % by processing response headers.
+- Prints quick hit‑rate summaries per content provider under each CDN.
+
+---
+
 ## Examples
 **Measure example CDN-hosted video segments with 10 workers and verbose logging**
 ```bash
 python main.py ./urls/example ./results --workers 10 --verbose
 ```
+**Process basic result CSVs to create per-video parquet data with cache hit-rates assigned:**
+```bash
+python helper.py ./results ./results/per_video.parquet
+```
 
-> **Note:** The example URLs included with this script are intentionally expired/invalid to avoid directing unnecessary traffic. The measurements will still execute and produce CSV results containing response headers and timing info — but the HTTP response code will not be `200`.
+> **Note:** The example URLs included with this script are intentionally expired/invalid to avoid directing unnecessary traffic. The measurements will still execute and produce CSV results containing response headers and timing info — but the HTTP response code will not be `200`. To obtain fresh/valid URLs, use the crawler.
 
 ---
 
 ## Performance Tuning
 - Increase `--workers` cautiously to avoid saturating your network or being rate‑limited by the CDN.
-- Keep timeouts conservative for wide‑area measurements; raise them when probing high‑latency regions.
 
 ---
 
